@@ -383,13 +383,13 @@
         }
 
         /* =========================================
-           🏆 英雄榜单：领奖台模块 (专业重构版)
-           ========================================= */
+                   🏆 英雄榜单：领奖台模块 (最优版)
+                   ========================================= */
         .podium-container {
-            display: flex !important; /* 强制开启横向排列 */
+            display: flex;
             justify-content: space-around;
-            align-items: flex-end; /* 底部对齐形成高度差 */
-            padding: 30px 10px 20px;
+            align-items: flex-end;           /* 底部对齐形成高度差 */
+            padding: 35px 10px 20px;          /* 增加顶部空间放置皇冠 */
             background: linear-gradient(180deg, #ffffff 0%, #fffbf0 100%);
             border-radius: 24px;
             margin: 15px 0;
@@ -400,13 +400,17 @@
             flex: 1;
             text-align: center;
             position: relative;
-            transition: transform 0.3s ease;
         }
 
-        /* 统一缩放比例，突出核心 */
-        .gold { order: 2; transform: scale(1.1); z-index: 2; }
-        .silver { order: 1; transform: scale(0.95); opacity: 0.9; }
-        .bronze { order: 3; transform: scale(0.9); opacity: 0.8; }
+        /* 调整顺序：金牌居中，银左铜右 */
+        .gold { order: 2; z-index: 2; }
+        .silver { order: 1; }
+        .bronze { order: 3; }
+
+        /* 使用 margin 控制高度差，避免 transform 带来的布局偏移 */
+        .gold { margin-top: -5px; }          /* 金牌微微抬高 */
+        .silver { margin-bottom: 15px; }      /* 银牌下沉 */
+        .bronze { margin-bottom: 25px; }      /* 铜牌下沉更多 */
 
         .avatar-wrapper {
             position: relative;
@@ -422,17 +426,26 @@
             background: #eee;
         }
 
-        /* 严格控制图片尺寸，防止“崩坏” */
-        .gold img { width: 100px; height: 100px; border-color: #FFD700; }
-        .silver img { width: 75px; height: 75px; border-color: #C0C0C0; }
-        .bronze img { width: 75px; height: 75px; border-color: #CD7F32; }
+        /* 图片尺寸按奖牌等级区分，边框颜色对应金属色 */
+        .gold img {
+            width: 100px;
+            height: 100px;
+            border-color: #FFD700;            /* 金色 */
+        }
+        .silver img,
+        .bronze img {
+            width: 75px;
+            height: 75px;
+        }
+        .silver img { border-color: #C0C0C0; } /* 银色 */
+        .bronze img { border-color: #CD7F32; } /* 铜色 */
 
-        /* 皇冠图标样式 */
+        /* 皇冠图标（仅金牌显示） */
         .crown-icon {
             position: absolute;
-            top: -30px;
+            top: -25px;                         /* 根据图片大小微调 */
             left: 50%;
-            transform: translateX(-50%) rotate(-10deg);
+            transform: translateX(-50%);
             color: #FFD700;
             font-size: 32px;
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
@@ -454,18 +467,21 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .gold .rank-tag { background: #FFD700; color: #000; }
+        .gold .rank-tag {
+            background: #FFD700;
+            color: #000;
+        }
 
-        .podium-item h4 { 
-            font-size: 14px; 
-            margin: 15px 0 5px; 
-            color: #1a1a1a; 
+        .podium-item h4 {
+            font-size: 14px;
+            margin: 15px 0 5px;
+            color: #1a1a1a;
             font-weight: 700;
         }
 
-        .podium-item .vote-count { 
-            font-size: 12px; 
-            color: #ff5252; 
+        .podium-item .vote-count {
+            font-size: 12px;
+            color: #ff5252;
             font-weight: bold;
             background: rgba(255,82,82,0.1);
             padding: 2px 8px;
