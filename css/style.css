@@ -381,3 +381,78 @@
             z-index: 999;
             display: none;
         }
+/* 领奖台布局逻辑 */
+.podium-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; /* 底部对齐，形成高度落差 */
+    padding: 30px 10px 10px;
+    background: linear-gradient(180deg, #ffffff 0%, #fffbf0 100%);
+    border-radius: 20px;
+    margin-top: 10px;
+}
+
+.podium-item {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+/* 关键：调整不同名次的高度和大小 */
+.gold { order: 2; z-index: 2; } /* 中间 */
+.silver { order: 1; transform: scale(0.9); } /* 左边 */
+.bronze { order: 3; transform: scale(0.85); } /* 右边 */
+
+.avatar-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.podium-item img {
+    border-radius: 50%;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* 第一名专属大头像 */
+.gold img { width: 90px; height: 90px; border-color: #FFD700; }
+.silver img { width: 75px; height: 75px; border-color: #C0C0C0; }
+.bronze img { width: 75px; height: 75px; border-color: #CD7F32; }
+
+/* 皇冠动画与样式 */
+.crown-icon {
+    position: absolute;
+    top: -32px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-10deg);
+    color: #FFD700;
+    font-size: 28px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+    animation: crownFloat 2s ease-in-out infinite;
+}
+
+@keyframes crownFloat {
+    0%, 100% { transform: translateX(-50%) rotate(-10deg) translateY(0); }
+    50% { transform: translateX(-50%) rotate(-10deg) translateY(-5px); }
+}
+
+.rank-tag {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.gold .rank-tag { background: #FFD700; color: #000; }
+
+.podium-item h4 { font-size: 13px; margin: 12px 0 4px; color: #1a1a1a; }
+.podium-item .vote-count { font-size: 11px; color: #ff5252; font-weight: bold; }
+
+
