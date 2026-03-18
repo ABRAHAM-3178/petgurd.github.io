@@ -383,34 +383,73 @@
         }
 
         /* =========================================
-                   🏆 英雄榜单：领奖台模块 (最优版)
+                   🏆 英雄榜单：领奖台模块 (带台阶+三色皇冠)
                    ========================================= */
         .podium-container {
             display: flex;
-            justify-content: space-around;
-            align-items: flex-end;           /* 底部对齐形成高度差 */
-            padding: 35px 10px 20px;          /* 增加顶部空间放置皇冠 */
-            background: linear-gradient(180deg, #ffffff 0%, #fffbf0 100%);
-            border-radius: 24px;
-            margin: 15px 0;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            justify-content: center;
+            align-items: flex-end;
+            gap: 10px;
+            padding: 40px 10px 0;
+            margin: 20px 0;
+            background: linear-gradient(180deg, #ffffff 0%, #fff9e6 100%);
+            border-radius: 30px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 底部台阶（共用背景） */
+        .podium-container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: #ddd;
+            border-radius: 0 0 30px 30px;
+            box-shadow: inset 0 5px 8px rgba(0,0,0,0.1);
+            z-index: -1;
         }
 
         .podium-item {
             flex: 1;
             text-align: center;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* 调整顺序：金牌居中，银左铜右 */
-        .gold { order: 2; z-index: 2; }
+        .gold { order: 2; }
         .silver { order: 1; }
         .bronze { order: 3; }
 
-        /* 使用 margin 控制高度差，避免 transform 带来的布局偏移 */
-        .gold { margin-top: -5px; }          /* 金牌微微抬高 */
-        .silver { margin-bottom: 15px; }      /* 银牌下沉 */
-        .bronze { margin-bottom: 25px; }      /* 铜牌下沉更多 */
+        /* 用margin控制高度差，模拟领奖台高低 */
+        .gold { margin-bottom: 0; }
+        .silver { margin-bottom: 20px; }
+        .bronze { margin-bottom: 30px; }
+
+        /* 每个奖牌的独立小台阶 */
+        .podium-item::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 10%;
+            width: 80%;
+            height: 20px;
+            background: #bbb;
+            border-radius: 10px 10px 0 0;
+            box-shadow: inset 0 -3px 5px rgba(0,0,0,0.1);
+            z-index: -1;
+        }
+
+        /* 根据等级调整台阶颜色 (可选) */
+        .gold::after { background: #e6c300; }
+        .silver::after { background: #a0a0a0; }
+        .bronze::after { background: #b87333; }
 
         .avatar-wrapper {
             position: relative;
@@ -426,33 +465,36 @@
             background: #eee;
         }
 
-        /* 图片尺寸按奖牌等级区分，边框颜色对应金属色 */
+        /* 图片尺寸按奖牌等级区分 */
         .gold img {
             width: 100px;
             height: 100px;
-            border-color: #FFD700;            /* 金色 */
+            border-color: #FFD700;
         }
         .silver img,
         .bronze img {
             width: 75px;
             height: 75px;
         }
-        .silver img { border-color: #C0C0C0; } /* 银色 */
-        .bronze img { border-color: #CD7F32; } /* 铜色 */
+        .silver img { border-color: #C0C0C0; }
+        .bronze img { border-color: #CD7F32; }
 
-        /* 皇冠图标（仅金牌显示） */
+        /* 皇冠图标（三色） */
         .crown-icon {
             position: absolute;
-            top: -25px;                         /* 根据图片大小微调 */
+            top: -20px;
             left: 50%;
             transform: translateX(-50%);
-            color: #FFD700;
-            font-size: 32px;
+            font-size: 28px;
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
             z-index: 10;
         }
 
-        /* 排名数字标签 */
+        .gold .crown-icon { color: #FFD700; }
+        .silver .crown-icon { color: #C0C0C0; }
+        .bronze .crown-icon { color: #CD7F32; }
+
+        /* 排名数字标签（可选，可保留或删除） */
         .rank-tag {
             position: absolute;
             bottom: -5px;
@@ -467,10 +509,9 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
-        .gold .rank-tag {
-            background: #FFD700;
-            color: #000;
-        }
+        .gold .rank-tag { background: #FFD700; color: #000; }
+        .silver .rank-tag { background: #C0C0C0; color: #000; }
+        .bronze .rank-tag { background: #CD7F32; color: #fff; }
 
         .podium-item h4 {
             font-size: 14px;
