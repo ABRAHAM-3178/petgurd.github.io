@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>宠伴一生 · 医疗专区</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 10px 0 0;
+        }
+
+        .phone {
+            max-width: 390px;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12);
+            border-radius: 36px 36px 0 0;
+            overflow: hidden;
+            height: 780px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 20px;
+            scrollbar-width: thin;
+            background-color: white;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e2a36;
+            padding: 8px 6px 0 6px;
+            background: white;
+        }
+
+        /* 页面头部 */
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 8px 0 16px;
+        }
+        .page-header .back-btn {
+            font-size: 24px;
+            color: #0066cc;
+            cursor: pointer;
+        }
+        .page-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e2a36;
+            margin: 0;
+        }
+
+        /* 第一排：极速诊疗 (两排网格) */
+        .emergency-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin: 10px 0 20px;
+        }
+        .track-item {
+            background: #f8fafc;
+            border-radius: 40px;
+            padding: 10px 4px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 12px;
+            position: relative;
+            border: 1px solid #e9edf2;
+            cursor: pointer;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .track-item.red { background: #fee9e7; color: #b91c1c; border-color: #fecac5; }
+        .track-item.blue { background: #e6f2fe; color: #0369a1; border-color: #b8d9fd; }
+        .track-item i { margin-right: 4px; font-size: 14px; }
+        .blink-dot {
+            position: absolute; top: 4px; right: 6px; width: 6px; height: 6px;
+            background: #dc2626; border-radius: 50%; animation: blink 1s infinite;
+        }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } }
+
+        /* AI能量球 (内嵌) */
+        .ai-inline-ball {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, #0066cc, #0099ff);
+            border-radius: 60px;
+            padding: 12px 20px;
+            margin: 20px 0 12px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0,102,204,0.3);
+        }
+        .ai-inline-ball .left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .ai-inline-ball i {
+            font-size: 28px;
+        }
+        .ai-inline-ball .text {
+            font-weight: 700;
+            font-size: 18px;
+        }
+        .ai-inline-ball .badge {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(4px);
+            border-radius: 40px;
+            padding: 4px 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* AI 对话框 (与之前相同) */
+        .ai-dialog {
+            display: none;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            padding: 22px;
+            margin: 10px 0 20px;
+            border: 1px solid rgba(0,102,204,0.1);
+        }
+        .ai-dialog.active { display: block; animation: slideDown 0.3s ease-out; }
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .ai-dialog h4 { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; color: #0066cc; }
+        .ai-dialog textarea {
+            width: 100%; border: 1.5px solid #e0e7ed; border-radius: 16px;
+            padding: 14px; margin: 10px 0; resize: none; height: 90px;
+            font-size: 14px; outline: none;
+        }
+        .ai-dialog button {
+            background: linear-gradient(135deg, #0066cc, #0099ff); color: white;
+            border: none; border-radius: 40px; padding: 14px; width: 100%;
+            font-weight: 600; cursor: pointer;
+        }
+
+        /* 筛选板块：一行五个下拉框（使用flex-wrap保证响应式） */
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 15px 0 20px;
+            background: #f9fbfd;
+            border-radius: 28px;
+            padding: 16px;
+            border: 1px solid #edf2f7;
+        }
+        .filter-item {
+            flex: 1 0 calc(50% - 8px); /* 默认每行两个，最小宽度适应 */
+            min-width: 120px;
+        }
+        .filter-select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 40px;
+            border: 1px solid #d0dae6;
+            background: white url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%235e6f7e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>') no-repeat right 16px center;
+            background-size: 16px;
+            appearance: none;
+            font-size: 14px;
+            color: #1e2a36;
+            outline: none;
+        }
+
+        /* 医院卡片 (带背景图) */
+        .hospital-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 20px 0 30px;
+        }
+        .hospital-card {
+            background-size: cover;
+            background-position: center;
+            border-radius: 28px;
+            padding: 18px;
+            position: relative;
+            color: white;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            min-height: 170px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+        .hospital-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 50%);
+            border-radius: 28px;
+        }
+        .hospital-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        .ai-badge {
+            position: absolute; top: 12px; right: 16px;
+            background: linear-gradient(145deg, #fbbf24, #f59e0b);
+            color: #1e2a36; font-size: 11px; font-weight: 700;
+            padding: 4px 12px; border-radius: 40px;
+            box-shadow: 0 4px 10px rgba(245,158,11,0.3); border: 2px solid white;
+            z-index: 2;
+        }
+        .hospital-card h4 {
+            font-size: 20px;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            padding-right: 70px;
+        }
+        .hospital-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            margin: 6px 0 8px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        .hospital-meta i { margin-right: 4px; }
+        .hospital-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 8px 0 12px;
+        }
+        .hospital-tag {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(2px);
+            padding: 4px 10px;
+            border-radius: 40px;
+            font-size: 11px;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        .hospital-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .hospital-actions span {
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(2px);
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 12px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        /* 宠物医药分区 */
+        .medicine-section {
+            margin: 30px 0 20px;
+        }
+        .medicine-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .medicine-title h3 { font-size: 18px; font-weight: 700; color: #1e2a36; }
+        .medicine-title a { color: #0066cc; font-size: 14px; text-decoration: none; }
+        .medicine-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+        }
+        .medicine-scroll::-webkit-scrollbar { display: none; }
+        .medicine-item {
+            min-width: 100px;
+            background: #f0f4f9;
+            border-radius: 40px;
+            padding: 12px 16px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+            color: #1e2a36;
+            white-space: nowrap;
+            border: 1px solid #d0dae6;
+        }
+        .medicine-item i {
+            margin-right: 6px;
+            color: #0066cc;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: white;
+            padding: 8px 12px 12px;
+            border-top: 1px solid #efefef;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #9aa5b5;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+        }
+        .nav-item i { font-size: 22px; margin-bottom: 3px; }
+        .nav-item.active { color: #0066cc; }
+
+        .toast-message {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.7); color: white; padding: 10px 20px;
+            border-radius: 40px; font-size: 14px; z-index: 2000; display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="status-bar">
+            <span>9:41</span>
+            <span><i class="fas fa-signal"></i> <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+        </div>
+
+        <div class="main-content">
+            <!-- 头部 -->
+            <div class="page-header">
+                <div class="back-btn" onclick="location.href='index.html'">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+                <h2>🏥 医疗专区</h2>
+            </div>
+
+            <!-- 极速诊疗两排网格 -->
+            <div class="emergency-grid">
+                <div class="track-item red">
+                    <i class="fas fa-ambulance"></i> 24H急诊 <span class="blink-dot"></span>
+                </div>
+                <div class="track-item red"><i class="fas fa-bone"></i> 骨科/外伤</div>
+                <div class="track-item red"><i class="fas fa-skull-crossbones"></i> 误食/中毒</div>
+                <div class="track-item blue"><i class="fas fa-cat"></i> 猫科专家</div>
+                <div class="track-item blue"><i class="fas fa-syringe"></i> 疫苗体检</div>
+                <div class="track-item blue"><i class="fas fa-calendar-check"></i> 绝育预约</div>
+            </div>
+
+            <!-- AI能量球（内嵌） -->
+            <div class="ai-inline-ball" id="aiInlineBall">
+                <div class="left">
+                    <i class="fas fa-robot"></i>
+                    <span class="text">AI寻医</span>
+                </div>
+                <div class="badge">
+                    <i class="fas fa-microchip"></i> 智能匹配
+                </div>
+            </div>
+
+            <!-- AI对话框（紧接能量球下方） -->
+            <div class="ai-dialog" id="aiDialog">
+                <h4><i class="fas fa-robot"></i> 宠伴 AI 智诊助手</h4>
+                <p style="font-size: 12px; color: #666;">描述症状（如：不吃东西、干呕），为您匹配最擅长的专家医院。</p>
+                <textarea id="aiInput" placeholder="例如：狗狗干呕、精神不太好..."></textarea>
+                <button onclick="simulateAISearch()">开启智能匹配</button>
+            </div>
+
+            <!-- 筛选板块：五个下拉选择 -->
+            <div class="filter-row">
+                <div class="filter-item">
+                    <select class="filter-select" id="distanceSelect">
+                        <option value="">距离优先</option>
+                        <option value="3km">3km以内</option>
+                        <option value="5km">5km以内</option>
+                        <option value="10km">10km以内</option>
+                        <option value="all">全城</option>
+                        <option value="nearby">附近优先</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <select class="filter-select" id="skillSelect">
+                        <option value="">擅长科目</option>
+                        <option value="消化内科">消化内科</option>
+                        <option value="皮肤科">皮肤科</option>
+                        <option value="骨科">骨科</option>
+                        <option value="眼科">眼科</option>
+                        <option value="牙科">牙科</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <select class="filter-select" id="facilitySelect">
+                        <option value="">设施设备</option>
+                        <option value="icu">有 ICU</option>
+                        <option value="ct">有 CT/MRI</option>
+                        <option value="endoscope">内窥镜</option>
+                        <option value="lab">化验室</option>
+                        <option value="surgery">手术室</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <select class="filter-select" id="ratingSelect">
+                        <option value="">评价星级</option>
+                        <option value="5">5星</option>
+                        <option value="4.5">4.5星以上</option>
+                        <option value="4">4星以上</option>
+                        <option value="3">3星以上</option>
+                        <option value="all">全部</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <select class="filter-select" id="otherSelect">
+                        <option value="">其他筛选</option>
+                        <option value="24h">24H急诊</option>
+                        <option value="vaccine">疫苗定点</option>
+                        <option value="insurance">保险直赔</option>
+                        <option value="night">夜间门诊</option>
+                        <option value="parking">免费停车</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 医院卡片列表 -->
+            <div class="hospital-list" id="hospitalList">
+                <div class="hospital-card" style="background-image: url('https://images.unsplash.com/photo-1587563871167-f2b2a7c7c8e8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');">
+                    <div class="ai-badge">🤖 AI 匹配 98%</div>
+                    <h4>瑞鹏宠物医院 (中心店)</h4>
+                    <div class="hospital-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> 1.2km</span>
+                        <span><i class="fas fa-star" style="color: #f5b342;"></i> 4.9 (2000+)</span>
+                        <span><i class="fas fa-clock"></i> 24H</span>
+                    </div>
+                    <div class="hospital-tags">
+                        <span class="hospital-tag">骨科手术</span>
+                        <span class="hospital-tag">MRI设备</span>
+                        <span class="hospital-tag">ICU</span>
+                    </div>
+                    <div class="hospital-actions">
+                        <span><i class="fas fa-phone-alt"></i> 致电</span>
+                        <span><i class="fas fa-calendar-check"></i> 预约</span>
+                    </div>
+                </div>
+
+                <div class="hospital-card" style="background-image: url('https://images.unsplash.com/photo-1576201836106-db1758c71c38?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');">
+                    <h4>华兴动物医院</h4>
+                    <div class="hospital-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> 2.3km</span>
+                        <span><i class="fas fa-star" style="color: #f5b342;"></i> 4.7 (800+)</span>
+                        <span><i class="fas fa-clock"></i> 8:00-22:00</span>
+                    </div>
+                    <div class="hospital-tags">
+                        <span class="hospital-tag">猫友好医院</span>
+                        <span class="hospital-tag">老年病康复</span>
+                        <span class="hospital-tag">CT</span>
+                    </div>
+                    <div class="hospital-actions">
+                        <span><i class="fas fa-phone-alt"></i> 致电</span>
+                        <span><i class="fas fa-calendar-check"></i> 预约</span>
+                    </div>
+                </div>
+
+                <div class="hospital-card" style="background-image: url('https://images.unsplash.com/photo-1530124566582-a618bc2615dc?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');">
+                    <h4>安安宠医</h4>
+                    <div class="hospital-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> 2.0km</span>
+                        <span><i class="fas fa-star" style="color: #f5b342;"></i> 4.5 (1200+)</span>
+                        <span><i class="fas fa-clock"></i> 9:00-21:00</span>
+                    </div>
+                    <div class="hospital-tags">
+                        <span class="hospital-tag">平价疫苗</span>
+                        <span class="hospital-tag">洗牙</span>
+                        <span class="hospital-tag">老年犬护理</span>
+                    </div>
+                    <div class="hospital-actions">
+                        <span><i class="fas fa-phone-alt"></i> 致电</span>
+                        <span><i class="fas fa-calendar-check"></i> 预约</span>
+                    </div>
+                </div>
+
+                <div class="hospital-card" style="background-image: url('https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80');">
+                    <div class="ai-badge">🤖 AI 匹配 92%</div>
+                    <h4>宠爱国际动物医院</h4>
+                    <div class="hospital-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> 3.5km</span>
+                        <span><i class="fas fa-star" style="color: #f5b342;"></i> 4.8 (600+)</span>
+                        <span><i class="fas fa-clock"></i> 24H急诊</span>
+                    </div>
+                    <div class="hospital-tags">
+                        <span class="hospital-tag">骨科专家</span>
+                        <span class="hospital-tag">内窥镜</span>
+                        <span class="hospital-tag">ICU</span>
+                    </div>
+                    <div class="hospital-actions">
+                        <span><i class="fas fa-phone-alt"></i> 致电</span>
+                        <span><i class="fas fa-calendar-check"></i> 预约</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 宠物医药分区 -->
+            <div class="medicine-section">
+                <div class="medicine-title">
+                    <h3>💊 宠物医药 · 按功效</h3>
+                    <a href="#">查看更多 <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="medicine-scroll">
+                    <div class="medicine-item"><i class="fas fa-capsules"></i> 消炎止痛</div>
+                    <div class="medicine-item"><i class="fas fa-bug"></i> 驱虫保健</div>
+                    <div class="medicine-item"><i class="fas fa-stomach"></i> 肠胃调理</div>
+                    <div class="medicine-item"><i class="fas fa-hand-dots"></i> 皮肤护理</div>
+                    <div class="medicine-item"><i class="fas fa-eye"></i> 眼耳清洁</div>
+                    <div class="medicine-item"><i class="fas fa-heart-pulse"></i> 心脏营养</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="location.href='index.html'"><i class="fas fa-house"></i><span>首页</span></div>
+            <div class="nav-item" onclick="showToast('宠物收养')"><i class="fas fa-hand-holding-heart"></i><span>宠物收养</span></div>
+            <div class="nav-item" onclick="showToast('宠物趣味')"><i class="fas fa-star"></i><span>宠物趣味</span></div>
+            <div class="nav-item" onclick="showToast('社区')"><i class="fas fa-comments"></i><span>社区</span></div>
+            <div class="nav-item" onclick="showToast('我的信息')"><i class="fas fa-user"></i><span>我的信息</span></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast-message"></div>
+
+    <script>
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = `✨ ${msg} 功能开发中 ✨`;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 2000);
+        }
+
+        // AI能量球点击展开对话框
+        const aiBall = document.getElementById('aiInlineBall');
+        const aiDialog = document.getElementById('aiDialog');
+        aiBall.addEventListener('click', (e) => {
+            e.stopPropagation();
+            aiDialog.classList.toggle('active');
+        });
+        // 点击其他地方关闭对话框
+        document.addEventListener('click', (e) => {
+            if (!aiDialog.contains(e.target) && !aiBall.contains(e.target)) {
+                aiDialog.classList.remove('active');
+            }
+        });
+
+        function simulateAISearch() {
+            const input = document.getElementById('aiInput').value;
+            if (!input.trim()) return alert("请先描述症状");
+            const btn = document.querySelector('.ai-dialog button');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 正在分析...';
+            setTimeout(() => {
+                btn.innerHTML = '开启智能匹配';
+                aiDialog.classList.remove('active');
+                document.getElementById('aiInput').value = '';
+                showToast('AI 已根据症状匹配最合适的医院');
+            }, 1500);
+        }
+
+        // 下拉框变更事件
+        document.querySelectorAll('.filter-select').forEach(select => {
+            select.addEventListener('change', function() {
+                showToast(`筛选条件已更新: ${this.options[this.selectedIndex].text}`);
+            });
+        });
+    </script>
+</body>
+</html>
