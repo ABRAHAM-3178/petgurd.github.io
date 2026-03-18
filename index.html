@@ -53,35 +53,45 @@
                 <span class="service-tag" onclick="showFeature('上门服务')"><i class="fa-solid fa-truck"></i> 上门</span>
             </div>
 
-            <!-- 英雄榜单 -->
+            <!-- 🏆 英雄榜单：领奖台模式 -->
             <div class="section-title">
-                <h3>🏆 本月萌宠PK · 金毛组</h3>
-                <a onclick="showFeature('更多榜单')">更多</a>
-            </div>
-            <div class="hero-scroll">
-                <div class="hero-card">
-                    <img src="https://images.dog.ceo/breeds/retriever-golden/n02099601_100.jpg" alt="毛毛" onerror="this.src='https://placedog.net/100/100?id=1'">
-                    <h4>毛毛</h4>
-                    <div class="declaration">“我是可爱女孩，投我！”</div>
-                    <div class="vote-count">1280票</div>
-                    <div class="shop-link" onclick="showFeature('查看同款')">🔗 查看同款项圈</div>
-                </div>
-                <div class="hero-card">
-                    <img src="https://placedog.net/100/100?id=2" alt="豆豆">
-                    <h4>双胞胎豆豆</h4>
-                    <div class="declaration">“大豆二豆双胞胎最可爱～”</div>
-                    <div class="vote-count">1240票</div>
-                    <div class="shop-link" onclick="showFeature('查看同款')">🔗 查看同款牵引绳</div>
-                </div>
-                <div class="hero-card">
-                    <img src="https://placedog.net/100/100?id=3" alt="布丁">
-                    <h4>布丁</h4>
-                    <div class="declaration">“选我！送罐罐”</div>
-                    <div class="vote-count">1100票</div>
-                    <div class="shop-link" onclick="showFeature('查看同款')">🔗 查看同款衣服</div>
-                </div>
+                <h3>🏆 本月萌宠榜 · 领奖台</h3>
+                <a onclick="showFeature('更多榜单')">更多 <i class="fas fa-chevron-right"></i></a>
             </div>
 
+            <div class="podium-container">
+                <!-- 第二名：左侧 -->
+                <div class="podium-item silver">
+                    <div class="avatar-wrapper">
+                        <img src="https://placedog.net/100/100?id=2" alt="豆豆">
+                        <div class="rank-tag">2</div>
+                    </div>
+                    <h4>双胞胎豆豆</h4>
+                    <div class="vote-count">1240票</div>
+                </div>
+
+                <!-- 第一名：中间（最高，带皇冠） -->
+                <div class="podium-item gold">
+                    <div class="crown-icon"><i class="fas fa-crown"></i></div>
+                    <div class="avatar-wrapper">
+                        <img src="https://images.dog.ceo/breeds/retriever-golden/n02099601_100.jpg" alt="毛毛">
+                        <div class="rank-tag">1</div>
+                    </div>
+                    <h4>毛毛</h4>
+                    <div class="vote-count">1280票</div>
+                </div>
+
+                <!-- 第三名：右侧 -->
+                <div class="podium-item bronze">
+                    <div class="avatar-wrapper">
+                        <img src="https://placedog.net/100/100?id=3" alt="布丁">
+                        <div class="rank-tag">3</div>
+                    </div>
+                    <h4>布丁</h4>
+                    <div class="vote-count">1100票</div>
+                </div>
+            </div>
+            
             <!-- 地图微缩卡片 -->
             <div class="section-title">
                 <h3>🏥 附近宠物医院 </h3>
