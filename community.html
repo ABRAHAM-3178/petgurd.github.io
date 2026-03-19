@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>宠伴一生 · 公益社区</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- 高德地图 API -->
+    <script src="https://webapi.amap.com/maps?v=2.0&key=5c9f9c4b5e4b8e5f3d2a1b6c8e7d9f0a&plugin=AMap.PlaceSearch,AMap.Geolocation"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 10px 0 0;
+        }
+        .phone {
+            max-width: 390px;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12);
+            border-radius: 36px 36px 0 0;
+            overflow: hidden;
+            height: 780px;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px 20px;
+            scrollbar-width: thin;
+            background-color: #F5F8FF;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e2a36;
+            padding: 8px 6px 0 6px;
+            background: white;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 25px 0 12px;
+            color: #1E3A8A;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title i { color: #F97316; }
+
+        /* 沉浸区 */
+        .hero {
+            background: linear-gradient(145deg, #1E3A8A, #2563EB);
+            border-radius: 32px;
+            padding: 20px 16px;
+            margin: 10px 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: white;
+        }
+        .hero-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 24px;
+            background: url('https://images.dog.ceo/breeds/retriever-golden/n02099601_100.jpg') center/cover;
+            border: 3px solid white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .hero-text {
+            flex: 1;
+        }
+        .hero-text h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        .hero-text p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        /* 荣誉区卡片 */
+        .honor-card {
+            background: white;
+            border-radius: 28px;
+            padding: 18px;
+            margin: 20px 0;
+            box-shadow: 0 8px 20px rgba(30, 58, 138, 0.05);
+        }
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .stat-box {
+            background: #F0F4FF;
+            border-radius: 24px;
+            padding: 12px 16px;
+            text-align: center;
+            flex: 1;
+            margin: 0 5px;
+        }
+        .stat-box:first-child { margin-left: 0; }
+        .stat-box:last-child { margin-right: 0; }
+        .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1E3A8A;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        .donor-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .avatar-group {
+            display: flex;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+            margin-left: -8px;
+            background: #ddd;
+            background-size: cover;
+        }
+        .avatar:first-child { margin-left: 0; }
+        .bubble {
+            background: #F97316;
+            color: white;
+            border-radius: 40px;
+            padding: 6px 12px;
+            font-size: 12px;
+            position: relative;
+            white-space: nowrap;
+        }
+        .bubble::after {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 6px 8px 6px 0;
+            border-style: solid;
+            border-color: transparent #F97316 transparent transparent;
+        }
+        .top-link {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 12px;
+            color: #2563EB;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* 功能区图标 */
+        .icon-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 25px 0;
+        }
+        .icon-item {
+            text-align: center;
+            cursor: pointer;
+        }
+        .icon-item i {
+            font-size: 28px;
+            background: white;
+            padding: 12px;
+            border-radius: 50%;
+            color: #1E3A8A;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 6px;
+            box-shadow: 0 4px 12px rgba(30,58,138,0.1);
+            transition: 0.2s;
+        }
+        .icon-item.highlight i { background: #F97316; color: white; }
+        .icon-item span { font-size: 12px; font-weight: 500; color: #1E2A36; }
+
+        /* 救助地图容器 */
+        .map-container {
+            width: 100%;
+            height: 200px;
+            border-radius: 28px;
+            margin: 20px 0;
+            overflow: hidden;
+            border: 2px solid white;
+            box-shadow: 0 8px 20px rgba(30,58,138,0.1);
+        }
+
+        /* 紧凑救助列表 */
+        .compact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .compact-card {
+            background: white;
+            border-radius: 20px;
+            padding: 12px;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid #e6edf5;
+            cursor: pointer;
+        }
+        .compact-card img {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            object-fit: cover;
+        }
+        .compact-info {
+            flex: 1;
+        }
+        .compact-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .compact-header h4 { font-size: 15px; font-weight: 700; color: #1E3A8A; }
+        .compact-tags {
+            display: flex;
+            gap: 6px;
+        }
+        .tag {
+            background: #FEF2E7;
+            color: #F97316;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 40px;
+            font-weight: 600;
+        }
+        .tag.urgent { background: #FFE4E0; color: #DC2626; }
+        .progress-compact {
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .progress-compact .bar {
+            flex: 1;
+            height: 6px;
+            background: #E5E7EB;
+            border-radius: 10px;
+        }
+        .progress-compact .fill {
+            height: 6px;
+            background: #F97316;
+            border-radius: 10px;
+            width: 60%;
+        }
+        .progress-compact span { font-size: 11px; color: #666; }
+
+        /* 透明账单 */
+        .bill-section {
+            background: white;
+            border-radius: 28px;
+            padding: 20px 16px;
+            margin: 25px 0;
+            box-shadow: 0 8px 20px rgba(30,58,138,0.05);
+            position: relative;
+        }
+        .bill-section::before, .bill-section::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: #F5F8FF;
+            border-radius: 50%;
+            top: -8px;
+        }
+        .bill-section::before { left: 20px; }
+        .bill-section::after { right: 20px; }
+        .bill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .bill-header h3 { color: #1E3A8A; font-size: 18px; }
+        .bill-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px dashed #ccc;
+        }
+        .bill-row:last-child { border-bottom: none; }
+        .bill-desc { font-size: 14px; color: #2c3e50; }
+        .bill-amount {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .bill-amount.out { color: #DC2626; }
+        .bill-amount.in { color: #10B981; }
+        .bill-icon {
+            width: 24px;
+            text-align: center;
+            color: #1E3A8A;
+            cursor: pointer;
+        }
+        .bill-footer {
+            margin-top: 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #999;
+            border-top: 2px dotted #1E3A8A;
+            padding-top: 12px;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: white;
+            padding: 8px 12px 12px;
+            border-top: 1px solid #efefef;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #9aa5b5;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+        }
+        .nav-item i { font-size: 22px; margin-bottom: 3px; }
+        .nav-item.active { color: #1E3A8A; }
+
+        .toast-message {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.7); color: white; padding: 10px 20px;
+            border-radius: 40px; font-size: 14px; z-index: 3000; display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="status-bar">
+            <span>9:41</span>
+            <span><i class="fas fa-signal"></i> <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+        </div>
+
+        <div class="main-content">
+            <!-- 沉浸区 -->
+            <div class="hero">
+                <div class="hero-img"></div>
+                <div class="hero-text">
+                    <h2>你的微小善举，<br>是它们余生的光</h2>
+                    <p>❤️ 流浪动物被救助后的笑脸</p>
+                </div>
+            </div>
+
+            <!-- 荣誉区卡片 -->
+            <div class="honor-card" id="honorCard">
+                <div class="stats-row" id="statsRow">
+                    <div class="stat-box">
+                        <div class="stat-number" id="personalNum">38天</div>
+                        <div class="stat-label" id="personalLabel">我已守护</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="personalDetail">12.5kg</div>
+                        <div class="stat-label" id="personalDetailLabel">累计捐粮</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-number" id="globalNum">10吨</div>
+                        <div class="stat-label" id="globalLabel">全站口粮</div>
+                    </div>
+                </div>
+                <div class="donor-row" id="donorRow">
+                    <div class="avatar-group" id="avatarGroup">
+                        <div class="avatar" style="background-image: url('https://randomuser.me/api/portraits/women/44.jpg');"></div>
+                        <div class="avatar" style="background-image: url('https://randomuser.me/api/portraits/men/32.jpg');"></div>
+                        <div class="avatar" style="background-image: url('https://randomuser.me/api/portraits/women/68.jpg');"></div>
+                        <div class="avatar" style="background-image: url('https://randomuser.me/api/portraits/men/75.jpg');"></div>
+                        <div class="avatar" style="background-image: url('https://randomuser.me/api/portraits/women/90.jpg');"></div>
+                    </div>
+                    <div class="bubble" id="bubble">玲玲 刚刚捐赠了1kg</div>
+                </div>
+                <div class="top-link" id="topLink" onclick="showToast('爱心榜单')">
+                    爱心榜单 <i class="fas fa-chevron-right"></i>
+                </div>
+            </div>
+
+            <!-- 功能区图标 -->
+            <div class="icon-grid" id="iconGrid">
+                <div class="icon-item highlight" data-type="feed" id="iconFeed">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <span>云投喂</span>
+                </div>
+                <div class="icon-item" data-type="tnr" id="iconTnr">
+                    <i class="fas fa-cut"></i>
+                    <span>TNR申请</span>
+                </div>
+                <div class="icon-item" data-type="sell" id="iconSell">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <span>旧物义卖</span>
+                </div>
+                <div class="icon-item" data-type="map" id="iconMap">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>救助地图</span>
+                </div>
+            </div>
+
+            <!-- 救助地图容器（高德地图） -->
+            <div class="map-container" id="rescueMap"></div>
+
+            <!-- 急需援手列表 -->
+            <div class="section-title">
+                <i class="fas fa-heartbeat"></i> 急需援手
+            </div>
+            <div class="compact-list">
+                <div class="compact-card" onclick="showToast('骨折小黄详情')">
+                    <img src="https://placedog.net/70/70?random=40" alt="">
+                    <div class="compact-info">
+                        <div class="compact-header">
+                            <h4>骨折小黄救助计划</h4>
+                            <div class="compact-tags">
+                                <span class="tag urgent">紧急</span>
+                                <span class="tag">手术中</span>
+                            </div>
+                        </div>
+                        <p style="font-size:12px; color:#666;">骨盆骨折，急需手术费</p>
+                        <div class="progress-compact">
+                            <div class="bar"><div class="fill" style="width:65%"></div></div>
+                            <span>¥650/1000</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="compact-card" onclick="showToast('猫瘟三花详情')">
+                    <img src="https://placedog.net/70/70?random=41" alt="">
+                    <div class="compact-info">
+                        <div class="compact-header">
+                            <h4>猫瘟三花·住院中</h4>
+                            <div class="compact-tags">
+                                <span class="tag urgent">紧急</span>
+                                <span class="tag">治疗中</span>
+                            </div>
+                        </div>
+                        <p style="font-size:12px; color:#666;">住院第4天，还需要营养品</p>
+                        <div class="progress-compact">
+                            <div class="bar"><div class="fill" style="width:85%"></div></div>
+                            <span>¥850/1000</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="compact-card" onclick="showToast('金毛领养详情')">
+                    <img src="https://placedog.net/70/70?random=42" alt="">
+                    <div class="compact-info">
+                        <div class="compact-header">
+                            <h4>金毛·找家</h4>
+                            <div class="compact-tags">
+                                <span class="tag">待领养</span>
+                            </div>
+                        </div>
+                        <p style="font-size:12px; color:#666;">性格温顺，已绝育</p>
+                        <div class="progress-compact">
+                            <div class="bar"><div class="fill" style="width:100%"></div></div>
+                            <span>已完成</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 透明账单 -->
+            <div class="section-title">
+                <i class="fas fa-receipt"></i> 每一分钱都有去向
+            </div>
+            <div class="bill-section">
+                <div class="bill-header">
+                    <h3>云投喂·流水</h3>
+                    <i class="fas fa-print" style="color:#1E3A8A;"></i>
+                </div>
+                <div class="bill-row">
+                    <span class="bill-desc">2025-03-18 狗粮采购</span>
+                    <span class="bill-amount out">-¥230.00</span>
+                    <i class="fas fa-file-pdf bill-icon" onclick="showToast('查看发票')"></i>
+                </div>
+                <div class="bill-row">
+                    <span class="bill-desc">2025-03-17 猫罐头</span>
+                    <span class="bill-amount out">-¥86.50</span>
+                    <i class="fas fa-file-pdf bill-icon" onclick="showToast('查看发票')"></i>
+                </div>
+                <div class="bill-row">
+                    <span class="bill-desc">用户“玲玲”捐赠</span>
+                    <span class="bill-amount in">+¥50.00</span>
+                    <i class="fas fa-file-pdf bill-icon" onclick="showToast('查看收据')"></i>
+                </div>
+                <div class="bill-footer">
+                    ⬇️ 撕线 · 成都市救助站专用收据 ⬇️
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="location.href='index.html'"><i class="fas fa-house"></i><span>首页</span></div>
+            <div class="nav-item" onclick="location.href='medical.html'"><i class="fas fa-hospital"></i><span>宠物医疗</span></div>
+            <div class="nav-item" onclick="location.href='backhome.html?type=adopt'"><i class="fas fa-paw"></i><span>宠物回家</span></div>
+            <div class="nav-item active"><i class="fas fa-tree"></i><span>公益社区</span></div>
+            <div class="nav-item" onclick="showToast('我的信息')"><i class="fas fa-user"></i><span>我的信息</span></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast-message"></div>
+
+    <script>
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = `✨ ${msg} 功能开发中 ✨`;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 2000);
+        }
+
+        // 高德地图初始化
+        let map = null;
+        function initRescueMap() {
+            if (typeof AMap === 'undefined') {
+                console.error('高德地图加载失败');
+                return;
+            }
+            map = new AMap.Map('rescueMap', {
+                zoom: 12,
+                center: [104.072, 30.663], // 成都中心
+                mapStyle: 'amap://styles/whitesmoke',
+                features: ['bg', 'road', 'point']
+            });
+
+            // 添加多个救助点标记
+            const points = [
+                { lng: 104.072, lat: 30.663, name: '爱之家救助站', type: '救助站' },
+                { lng: 104.080, lat: 30.655, name: '武侯喂食点', type: '喂食点' },
+                { lng: 104.065, lat: 30.670, name: '青羊救助点', type: '救助站' },
+                { lng: 104.090, lat: 30.640, name: '锦江合作医院', type: '医院' },
+                { lng: 104.050, lat: 30.680, name: '金牛流浪猫窝', type: '喂食点' }
+            ];
+
+            points.forEach(p => {
+                const marker = new AMap.Marker({
+                    position: [p.lng, p.lat],
+                    map: map,
+                    title: p.name,
+                    icon: p.type === '救助站' ? '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png' :
+                          p.type === '喂食点' ? '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-blue.png' :
+                          '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-green.png'
+                });
+                marker.on('click', () => {
+                    showToast(p.name);
+                });
+            });
+
+            // 添加虚线圆圈表示搜索范围（可选）
+            new AMap.Circle({
+                center: [104.072, 30.663],
+                radius: 2000,
+                borderWeight: 1,
+                strokeColor: "#F97316",
+                strokeOpacity: 0.4,
+                strokeStyle: "dashed",
+                fillColor: "#F97316",
+                fillOpacity: 0.05,
+                map: map
+            });
+        }
+
+        // 荣誉区更新数据
+        const honorElements = {
+            personalNum: document.getElementById('personalNum'),
+            personalLabel: document.getElementById('personalLabel'),
+            personalDetail: document.getElementById('personalDetail'),
+            personalDetailLabel: document.getElementById('personalDetailLabel'),
+            globalNum: document.getElementById('globalNum'),
+            globalLabel: document.getElementById('globalLabel'),
+            avatarGroup: document.getElementById('avatarGroup'),
+            bubble: document.getElementById('bubble'),
+            topLink: document.getElementById('topLink')
+        };
+
+        // 模拟头像库
+        const avatars = [
+            'https://randomuser.me/api/portraits/women/44.jpg',
+            'https://randomuser.me/api/portraits/men/32.jpg',
+            'https://randomuser.me/api/portraits/women/68.jpg',
+            'https://randomuser.me/api/portraits/men/75.jpg',
+            'https://randomuser.me/api/portraits/women/90.jpg',
+            'https://randomuser.me/api/portraits/men/22.jpg',
+            'https://randomuser.me/api/portraits/women/33.jpg',
+            'https://randomuser.me/api/portraits/men/55.jpg',
+            'https://randomuser.me/api/portraits/women/11.jpg'
+        ];
+
+        // 不同功能对应的荣誉区数据
+        const honorData = {
+            feed: {
+                personalNum: '38天',
+                personalLabel: '投喂天数',
+                personalDetail: '12.5kg',
+                personalDetailLabel: '累计投喂',
+                globalNum: '10吨',
+                globalLabel: '全站投喂',
+                avatars: [avatars[0], avatars[1], avatars[2], avatars[3], avatars[4]],
+                bubble: '玲玲 刚刚捐赠了1kg',
+                topLinkText: '投喂榜单'
+            },
+            tnr: {
+                personalNum: '3只',
+                personalLabel: '申请绝育',
+                personalDetail: '2只完成',
+                personalDetailLabel: '已手术',
+                globalNum: '247只',
+                globalLabel: '全站绝育',
+                avatars: [avatars[5], avatars[6], avatars[2], avatars[7], avatars[0]],
+                bubble: '张医生 完成了第5台手术',
+                topLinkText: 'TNR贡献榜'
+            },
+            sell: {
+                personalNum: '8件',
+                personalLabel: '义卖物品',
+                personalDetail: '¥156',
+                personalDetailLabel: '义卖总额',
+                globalNum: '326件',
+                globalLabel: '全站义卖',
+                avatars: [avatars[1], avatars[3], avatars[5], avatars[6], avatars[8]],
+                bubble: '王阿姨 刚刚义卖出1个猫窝',
+                topLinkText: '义卖之星'
+            },
+            map: {
+                personalNum: '12个',
+                personalLabel: '打卡点',
+                personalDetail: '5次救助',
+                personalDetailLabel: '参与救助',
+                globalNum: '89个',
+                globalLabel: '全站标记',
+                avatars: [avatars[2], avatars[4], avatars[6], avatars[7], avatars[1]],
+                bubble: '小李 标记了新的喂食点',
+                topLinkText: '地图贡献榜'
+            }
+        };
+
+        // 更新荣誉区
+        function updateHonor(type) {
+            const data = honorData[type];
+            if (!data) return;
+
+            honorElements.personalNum.textContent = data.personalNum;
+            honorElements.personalLabel.textContent = data.personalLabel;
+            honorElements.personalDetail.textContent = data.personalDetail;
+            honorElements.personalDetailLabel.textContent = data.personalDetailLabel;
+            honorElements.globalNum.textContent = data.globalNum;
+            honorElements.globalLabel.textContent = data.globalLabel;
+            honorElements.bubble.textContent = data.bubble;
+            honorElements.topLink.innerHTML = `${data.topLinkText} <i class="fas fa-chevron-right"></i>`;
+
+            // 更新头像组
+            honorElements.avatarGroup.innerHTML = data.avatars.map((url, index) => {
+                return `<div class="avatar" style="background-image: url('${url}'); z-index: ${5-index};"></div>`;
+            }).join('');
+
+            // 更新爱心榜单点击事件
+            honorElements.topLink.onclick = () => showToast(data.topLinkText);
+        }
+
+        // 图标点击处理
+        const icons = document.querySelectorAll('.icon-item');
+        icons.forEach(icon => {
+            icon.addEventListener('click', function(e) {
+                icons.forEach(ic => ic.classList.remove('highlight'));
+                this.classList.add('highlight');
+                const type = this.dataset.type;
+                if (type) {
+                    updateHonor(type);
+                }
+                showToast(this.querySelector('span').innerText);
+            });
+        });
+
+        // 初始加载
+        window.onload = function() {
+            updateHonor('feed');
+            initRescueMap();
+        };
+    </script>
+</body>
+</html>
