@@ -918,7 +918,18 @@
 
         adoptTab.addEventListener('click', () => switchMode('adopt'));
         lostTab.addEventListener('click', () => switchMode('lost'));
-        switchMode('adopt'); // 默认领养模式
+                // 获取 URL 参数并自动切换模式
+        function getUrlParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        const type = getUrlParam('type');
+        if (type === 'search') {
+            switchMode('lost');
+        } else {
+            switchMode('adopt');
+        }
     </script>
 </body>
 </html>
