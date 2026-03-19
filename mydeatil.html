@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>宠伴一生 · 我的信息</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 10px 0 0;
+        }
+        .phone {
+            max-width: 390px;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12);
+            border-radius: 36px 36px 0 0;
+            overflow: hidden;
+            height: 780px;
+            display: flex;
+            flex-direction: column;
+        }
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 16px 20px;
+            scrollbar-width: thin;
+            background-color: #F5F8FF;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e2a36;
+            padding: 8px 6px 0 6px;
+            background: white;
+        }
+
+        /* 页面标题 */
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1E3A8A;
+            margin: 8px 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .page-title i { color: #F97316; }
+
+        /* 用户卡片（紧凑） */
+        .user-card {
+            background: white;
+            border-radius: 24px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(30,58,138,0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #F0F4FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: #1E3A8A;
+            border: 2px solid #F97316;
+        }
+        .user-info h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1E3A8A;
+        }
+        .user-meta {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+            font-size: 12px;
+        }
+        .user-meta span {
+            background: #F0F4FF;
+            padding: 2px 10px;
+            border-radius: 40px;
+            color: #1E3A8A;
+        }
+
+        /* 小标题 */
+        .section-mini-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1E3A8A;
+            margin: 18px 0 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .section-mini-title i { color: #F97316; }
+
+        /* 宠物档案（小图标） */
+        .pet-mini-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .pet-mini-item {
+            background: white;
+            border-radius: 20px;
+            padding: 8px 4px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(30,58,138,0.03);
+            cursor: pointer;
+        }
+        .pet-mini-item i {
+            font-size: 24px;
+            color: #F97316;
+            margin-bottom: 2px;
+        }
+        .pet-mini-item span {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1E3A8A;
+            display: block;
+        }
+
+        /* 领养打卡入口 */
+        .checkin-card {
+            background: white;
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 4px solid #F97316;
+            cursor: pointer;
+        }
+        .checkin-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #FEF2E7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #F97316;
+        }
+        .checkin-info {
+            flex: 1;
+        }
+        .checkin-info h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1E3A8A;
+        }
+        .checkin-info p {
+            font-size: 12px;
+            color: #666;
+        }
+        .checkin-progress {
+            width: 80px;
+            height: 6px;
+            background: #E5E7EB;
+            border-radius: 10px;
+            margin-top: 6px;
+        }
+        .checkin-progress .fill {
+            height: 6px;
+            background: #F97316;
+            border-radius: 10px;
+            width: 66%;
+        }
+
+        /* 快捷入口 (一行四个) */
+        .quick-icons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .quick-icon-item {
+            background: white;
+            border-radius: 16px;
+            padding: 8px 2px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(30,58,138,0.03);
+            cursor: pointer;
+        }
+        .quick-icon-item i {
+            font-size: 20px;
+            color: #1E3A8A;
+            margin-bottom: 2px;
+        }
+        .quick-icon-item span {
+            font-size: 10px;
+            font-weight: 500;
+            color: #333;
+            display: block;
+        }
+
+        /* 趣味活动区域：选美 + 知识 + 热议 */
+        .fun-zone {
+            margin-bottom: 16px;
+        }
+        .fun-zone .mini-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 0;
+        }
+        .fun-zone .mini-card {
+            flex: 1;
+            background: white;
+            border-radius: 20px;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(30,58,138,0.03);
+        }
+        .fun-zone .mini-card h5 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1E3A8A;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .contest-mini-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .contest-mini-item img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .contest-mini-item span {
+            font-size: 11px;
+            color: #333;
+        }
+        .knowledge-mini-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+            font-size: 11px;
+        }
+        .knowledge-mini-item .rank {
+            color: #F97316;
+            font-weight: 700;
+        }
+        .knowledge-mini-item .title {
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 热议部分（位于趣味活动内） */
+        .hot-mini-compact {
+            background: white;
+            border-radius: 20px;
+            padding: 12px;
+            margin-top: 10px;
+        }
+        .hot-mini-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        .hot-mini-item:last-child { border-bottom: none; }
+        .hot-mini-item .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #F0F4FF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #1E3A8A;
+        }
+        .hot-mini-content {
+            flex: 1;
+        }
+        .hot-mini-content .name {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1E3A8A;
+        }
+        .hot-mini-content .text {
+            font-size: 11px;
+            color: #666;
+        }
+        .hot-mini-stats {
+            font-size: 10px;
+            color: #999;
+        }
+
+        /* 公益足迹（三小图标） */
+        .footprint-grid {
+            display: flex;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .footprint-item {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .footprint-item i {
+            font-size: 20px;
+            color: #F97316;
+        }
+        .footprint-item .count {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1E3A8A;
+            margin: 2px 0;
+        }
+        .footprint-item .label {
+            font-size: 10px;
+            color: #666;
+        }
+
+        /* 底部导航 */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: white;
+            padding: 8px 12px 12px;
+            border-top: 1px solid #efefef;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #9aa5b5;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+        }
+        .nav-item i { font-size: 22px; margin-bottom: 3px; }
+        .nav-item.active { color: #1E3A8A; }
+
+        .toast-message {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.7); color: white; padding: 10px 20px;
+            border-radius: 40px; font-size: 14px; z-index: 3000; display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone">
+        <div class="status-bar">
+            <span>9:41</span>
+            <span><i class="fas fa-signal"></i> <i class="fas fa-wifi"></i> <i class="fas fa-battery-full"></i></span>
+        </div>
+
+        <div class="main-content">
+            <!-- 页面标题 -->
+            <div class="page-title">
+                <i class="fas fa-user"></i> 我的信息
+            </div>
+
+            <!-- 用户卡片 -->
+            <div class="user-card">
+                <div class="user-avatar">
+                    <i class="fas fa-dog"></i>
+                </div>
+                <div class="user-info">
+                    <h3>豆豆家长</h3>
+                    <div class="user-meta">
+                        <span><i class="fas fa-paw"></i> 2只</span>
+                        <span><i class="fas fa-star"></i> Lv.8</span>
+                        <span><i class="fas fa-heart"></i> 1280</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 宠物档案 -->
+            <div class="section-mini-title">
+                <i class="fas fa-folder-open"></i> 我的宠档案
+            </div>
+            <div class="pet-mini-grid">
+                <div class="pet-mini-item" onclick="showToast('豆豆')">
+                    <i class="fas fa-dog"></i>
+                    <span>豆豆</span>
+                </div>
+                <div class="pet-mini-item" onclick="showToast('咪咪')">
+                    <i class="fas fa-cat"></i>
+                    <span>咪咪</span>
+                </div>
+                <div class="pet-mini-item" onclick="showToast('添加宠物')">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>添加</span>
+                </div>
+            </div>
+
+            <!-- 领养打卡入口 -->
+            <div class="checkin-card" onclick="showToast('领养打卡')">
+                <div class="checkin-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="checkin-info">
+                    <h4>领养打卡 · 豆豆</h4>
+                    <p>已打卡 4/6 次，再坚持2次退押金</p>
+                    <div class="checkin-progress">
+                        <div class="fill" style="width:66%"></div>
+                    </div>
+                </div>
+                <i class="fas fa-chevron-right" style="color:#F97316;"></i>
+            </div>
+
+            <!-- 快捷入口（首页/医疗/回家/公益的核心入口） -->
+            <div class="section-mini-title">
+                <i class="fas fa-compass"></i> 快速通道
+            </div>
+            <div class="quick-icons">
+                <div class="quick-icon-item" onclick="location.href='index.html'">
+                    <i class="fas fa-house"></i><span>首页</span>
+                </div>
+                <div class="quick-icon-item" onclick="location.href='medical.html'">
+                    <i class="fas fa-hospital"></i><span>医疗</span>
+                </div>
+                <div class="quick-icon-item" onclick="location.href='backhome.html?type=adopt'">
+                    <i class="fas fa-paw"></i><span>回家</span>
+                </div>
+                <div class="quick-icon-item" onclick="location.href='community.html'">
+                    <i class="fas fa-tree"></i><span>公益</span>
+                </div>
+            </div>
+
+            <!-- 趣味活动板块（选美+知识+热议） -->
+            <div class="section-mini-title">
+                <i class="fas fa-gamepad"></i> 趣味活动
+            </div>
+            <div class="fun-zone">
+                <!-- 选美 + 知识 并排 -->
+                <div class="mini-row">
+                    <!-- 选美比赛 -->
+                    <div class="mini-card">
+                        <h5><i class="fas fa-star" style="color:#F97316;"></i> 选美比赛</h5>
+                        <div class="contest-mini-item" onclick="showToast('金毛组')">
+                            <img src="https://placedog.net/30/30?random=101" alt="">
+                            <span>金毛组 · 豆豆 1280票</span>
+                        </div>
+                        <div class="contest-mini-item" onclick="showToast('布偶组')">
+                            <img src="https://placedog.net/30/30?random=102" alt="">
+                            <span>布偶组 · 咪咪 980票</span>
+                        </div>
+                        <div class="contest-mini-item" onclick="showToast('更多比赛')">
+                            <i class="fas fa-chevron-right" style="color:#F97316; margin-left:auto;"></i>
+                            <span>查看全部</span>
+                        </div>
+                    </div>
+                    <!-- 知识榜单 -->
+                    <div class="mini-card">
+                        <h5><i class="fas fa-book" style="color:#F97316;"></i> 知识榜</h5>
+                        <div class="knowledge-mini-item" onclick="showToast('夏天狗狗中暑')">
+                            <span class="rank">🔥1</span>
+                            <span class="title">夏天狗狗中暑自救</span>
+                        </div>
+                        <div class="knowledge-mini-item" onclick="showToast('猫咪尿闭')">
+                            <span class="rank">🔥2</span>
+                            <span class="title">猫咪尿闭6个前兆</span>
+                        </div>
+                        <div class="knowledge-mini-item" onclick="showToast('更多知识')">
+                            <span class="rank">...</span>
+                            <span class="title">查看更多</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 网友热议（作为趣味活动的一部分） -->
+                <div class="hot-mini-compact">
+                    <div class="hot-mini-item" onclick="showToast('爱宠小张')">
+                        <div class="avatar"><i class="fas fa-user"></i></div>
+                        <div class="hot-mini-content">
+                            <div class="name">爱宠小张</div>
+                            <div class="text">带主子去体检啦！一切健康～</div>
+                        </div>
+                        <div class="hot-mini-stats">56❤️</div>
+                    </div>
+                    <div class="hot-mini-item" onclick="showToast('猫奴老王')">
+                        <div class="avatar"><i class="fas fa-cat"></i></div>
+                        <div class="hot-mini-content">
+                            <div class="name">猫奴老王</div>
+                            <div class="text">新买的猫砂超级好用！</div>
+                        </div>
+                        <div class="hot-mini-stats">34❤️</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 公益足迹（云投喂/TNR/义卖统计） -->
+            <div class="section-mini-title">
+                <i class="fas fa-heart"></i> 我的公益足迹
+            </div>
+            <div class="footprint-grid">
+                <div class="footprint-item" onclick="showToast('云投喂')">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <div class="count">12.5kg</div>
+                    <div class="label">云投喂</div>
+                </div>
+                <div class="footprint-item" onclick="showToast('TNR申请')">
+                    <i class="fas fa-cut"></i>
+                    <div class="count">3只</div>
+                    <div class="label">TNR</div>
+                </div>
+                <div class="footprint-item" onclick="showToast('旧物义卖')">
+                    <i class="fas fa-hand-holding-heart"></i>
+                    <div class="count">8件</div>
+                    <div class="label">义卖</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="location.href='index.html'"><i class="fas fa-house"></i><span>首页</span></div>
+            <div class="nav-item" onclick="location.href='medical.html'"><i class="fas fa-hospital"></i><span>宠物医疗</span></div>
+            <div class="nav-item" onclick="location.href='backhome.html?type=adopt'"><i class="fas fa-paw"></i><span>宠物回家</span></div>
+            <div class="nav-item" onclick="location.href='community.html'"><i class="fas fa-tree"></i><span>公益社区</span></div>
+            <div class="nav-item active"><i class="fas fa-user"></i><span>我的信息</span></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast-message"></div>
+
+    <script>
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = `✨ ${msg} 功能开发中 ✨`;
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 2000);
+        }
+    </script>
+</body>
+</html>
